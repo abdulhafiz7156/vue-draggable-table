@@ -10,98 +10,108 @@ export default {
           "id": 1,
           "title": "Design the website layout for an online store",
           "description": "Create a visually appealing and user-friendly website layout for an online store. Include",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 2,
           "title": "Develop the front-end of the website",
           "description": "Implement the front-end of the website using HTML, CSS, and JavaScript. Make sure it is",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 3,
           "title": "Design the database schema for the online store",
           "description": "Create a database schema that includes tables for products, customers, orders, and payments",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 4,
           "title": "Develop the back-end of the website",
           "description": "Implement the back-end of the website using a server-side language such as Python or Node.js",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 5,
           "title": "Implement user authentication and authorization",
           "description": "Create an authentication and authorization system that ensures only authorized users can",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 6,
           "title": "Develop the functionality to add, edit, and remove products from the online store",
           "description": "Implement the functionality to add, edit, and remove products from the online store. Also make",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 7,
           "title": "Implement a payment gateway for the online store",
           "description": "Create a payment gateway that handles different types of payments and refunds.",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 8,
           "title": "Develop the functionality to manage orders and customer information",
           "description": "Implement the functionality to manage orders and customer information. Ensure that each order",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 9,
           "title": "Implement a loyalty program for the online store",
           "description": "Create a loyalty program that tracks customer rewards and points.",
-          "category": "to-do"
+          "category": "to-do",
+          "status": "pending"
         },
         {
           "id": 10,
           "title": "Develop the functionality to handle product returns and exchanges",
           "description": "Implement the functionality to handle product returns and exchanges. Also make sure it can",
-          "category": "to-do"
+          "category": "progress",
+          "status": "pending"
         },
         {
           "id": 11,
           "title": "Implement a customer service chatbot for the online store",
           "description": "Create a customer service chatbot that handles common questions and provides helpful",
-          "category": "to-do"
+          "category": "done",
+          "status": "pending"
         },
         {
           "id": 12,
           "title": "Develop the functionality to handle product recommendations and suggestions",
           "description": "Implement the functionality to provide related products and suggestions based on customer",
-          "category": "to-do"
+          "category": "bug",
+          "status": "pending"
+        },
+      ],
+      columns: [
+        {
+          id: 1,
+          name: 'To-Do',
+          class: 'to-do'
         },
         {
-          "id": 13,
-          "title": "Implement a wishlist feature for the online store",
-          "description": "Create a wishlist feature that tracks customer wishlists and products they are interested",
-          "category": "to-do"
+          id: 2,
+          name: 'Progress',
+          class: 'progress'
         },
         {
-          "id": 14,
-          "title": "Develop the functionality to handle product bundles and discounts",
-          "description": "Implement the functionality to provide discounts and promotions to customers.",
-          "category": "bug"
+          id: 3,
+          name: 'Done',
+          class: 'done'
         },
         {
-          "id": 15,
-          "title": "Implement a coupon feature for the online store",
-          "description": "Create a coupon feature that tracks customer coupons and rewards.",
-          "category": "to-do"
+          id: 4,
+          name: 'Bug',
+          class: 'bug'
         },
-        {
-          "id": 16,
-          "title": "Develop the functionality to handle product reviews and ratings",
-          "description": "Implement the functionality to track product reviews and ratings. Also make sure it can handle",
-          "category": "to-do"
-        }
       ],
       draggedItem: null,
       showPopup: true,
@@ -123,16 +133,26 @@ export default {
     //       });
     //   }
     handleDragStart(index) {
+      console.log(index)
       this.draggedItem = index;
     },
     handleDragOver(event) {
       event.preventDefault();
     },
     handleDrop(category) {
-      const droppedTask = this.tasks.splice(this.draggedItem, 1)[0];
+      const droppedTask = this.tasks.find(task => task.id === this.draggedItem);
       droppedTask.category = category;
+      if (droppedTask.category === category) {
+        return;
+      }
+      const index = this.tasks.findIndex(task => task.id === this.draggedItem);
+      this.tasks.splice(index, 1);
       const insertIndex = this.tasks.findIndex(task => task.category === category);
-      this.tasks.splice(insertIndex, 0, droppedTask);
+      if (insertIndex !== -1) {
+        this.tasks.splice(insertIndex, 0, droppedTask);
+      } else {
+        this.tasks.push(droppedTask);
+      }
       this.draggedItem = null;
     },
     handleDragEnd() {
@@ -161,6 +181,9 @@ export default {
           .catch(error => {
             console.error('Error fetching data:', error);
           });
+    },
+    filteredTasks(columnName) {
+      return this.tasks.filter(task => task.category === columnName);
     }
   },
   created() {
@@ -176,58 +199,25 @@ export default {
 
 <template>
   <div class="columns" draggable="true" >
-      <div class="child to-do"  @dragover.prevent @drop="handleDrop('to-do')">
-        <h5>To-do {{this.tasks.filter(task => task.category === 'to-do').length}}</h5>
-        <div v-for="(item, index) in this.tasks.filter(task => task.category === 'to-do')"
-             :key="index"
-             class="cards"
-             draggable="true"
-             @dragstart="handleDragStart(index)"
-             @dragend="handleDragEnd"
-        >
-          <p>{{item}}</p>
+    <div
+        class="child"
+        v-for="(column, index) in this.columns"
+        :class="column.class"
+        :key="index"
+        @dragover.prevent
+        @drop="handleDrop(column.class)"
+    >
+      <h5>{{column.name}}{{column.length}}</h5>
+      <div v-for="(item, index) in filteredTasks(column.class)"
+           :key="index"
+           class="cards"
+           draggable="true"
+           @dragstart="handleDragStart(item.id)"
+           @dragend="handleDragEnd"
+      >
+        <p>{{item.title}}</p>
       </div>
-      </div>
-      <div class="child progress"  @dragover.prevent @drop="handleDrop('progress')">
-        <h5>Progress  {{this.tasks.filter(task => task.category === 'progress').length}}</h5>
-        <div v-for="(item, index) in this.tasks.filter(task => task.category === 'progress')"
-             :key="index"
-             class="cards"
-             draggable="true"
-             @dragstart="handleDragStart(index)"
-             @dragend="handleDragEnd"
-        >
-          <p>{{item}}</p>
-        </div>
-        </div>
-      <div class="child done"  @dragover.prevent @drop="handleDrop('done')">
-        <h5>Done  {{this.tasks.filter(task => task.category === 'done').length}}</h5>
-        <div v-for="(item, index) in this.tasks.filter(task => task.category === 'done')"
-             :key="index"
-             class="cards"
-             draggable="true"
-             @dragstart="this.handleDragStart(index)"
-             @dragover="this.handleDragOver"
-             @drop="this.handleDrop(index)"
-             @dragend="this.handleDragEnd"
-        >
-          <p>{{item}}</p>
-        </div>
-      </div>
-      <div class="child bug"  @dragover.prevent @drop="handleDrop('bug')">
-        <h5>Bug  {{this.tasks.filter(task => task.category === 'bug').length}}</h5>
-        <div v-for="(item, index) in this.tasks.filter(task => task.category === 'bug')"
-             :key="index"
-             class="cards"
-             draggable="true"
-             @dragstart="this.handleDragStart(index)"
-             @dragover="this.handleDragOver"
-             @drop="this.handleDrop(index)"
-             @dragend="this.handleDragEnd"
-        >
-          <p>{{item}}</p>
-        </div>
-      </div>
+    </div>
   </div>
   <!-- Popup -->
   <div v-if="this.showPopup" class="popup">

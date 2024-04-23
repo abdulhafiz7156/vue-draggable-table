@@ -103,7 +103,11 @@ export default {
           "category": "to-do"
         }
       ],
-      draggedItem: null
+      draggedItem: null,
+      showPopup: true,
+      username: '',
+      repository: '',
+      branches: null
     }
   },
   methods: {
@@ -128,15 +132,43 @@ export default {
       const droppedTask = this.tasks.splice(this.draggedItem, 1)[0];
       droppedTask.category = category;
       const insertIndex = this.tasks.findIndex(task => task.category === category);
-      console.log(insertIndex)
       this.tasks.splice(insertIndex, 0, droppedTask);
       this.draggedItem = null;
     },
     handleDragEnd() {
       this.draggedItem = null;
+    },
+    openPopup() {
+      this.showPopup = true;
+    },
+    closePopup() {
+      this.showPopup = false;
+    },
+    fetchBranches() {
+      fetch(`https://api.github.com/repos/${this.username}/${this.repository}/branches`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            this.branches = data;
+            console.log(data);
+            localStorage.setItem('githubBranches', JSON.stringify(data));
+            this.showPopup = false;
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
     }
   },
   created() {
+      if(localStorage.getItem('githubBranches')){
+        this.showPopup = false
+      } else {
+        this.showPopup = true
+      }
   }
 
 }
@@ -145,8 +177,7 @@ export default {
 <template>
   <div class="columns" draggable="true" >
       <div class="child to-do"  @dragover.prevent @drop="handleDrop('to-do')">
-        <h5>To-do</h5>
-<!--        <Cards :cards="this.tasks" />-->
+        <h5>To-do {{this.tasks.filter(task => task.category === 'to-do').length}}</h5>
         <div v-for="(item, index) in this.tasks.filter(task => task.category === 'to-do')"
              :key="index"
              class="cards"
@@ -158,6 +189,7 @@ export default {
       </div>
       </div>
       <div class="child progress"  @dragover.prevent @drop="handleDrop('progress')">
+        <h5>Progress  {{this.tasks.filter(task => task.category === 'progress').length}}</h5>
         <div v-for="(item, index) in this.tasks.filter(task => task.category === 'progress')"
              :key="index"
              class="cards"
@@ -169,6 +201,7 @@ export default {
         </div>
         </div>
       <div class="child done"  @dragover.prevent @drop="handleDrop('done')">
+        <h5>Done  {{this.tasks.filter(task => task.category === 'done').length}}</h5>
         <div v-for="(item, index) in this.tasks.filter(task => task.category === 'done')"
              :key="index"
              class="cards"
@@ -182,6 +215,7 @@ export default {
         </div>
       </div>
       <div class="child bug"  @dragover.prevent @drop="handleDrop('bug')">
+        <h5>Bug  {{this.tasks.filter(task => task.category === 'bug').length}}</h5>
         <div v-for="(item, index) in this.tasks.filter(task => task.category === 'bug')"
              :key="index"
              class="cards"
@@ -195,6 +229,19 @@ export default {
         </div>
       </div>
   </div>
+  <!-- Popup -->
+  <div v-if="this.showPopup" class="popup">
+    <div class="popup-content">
+      <span class="close" @click="this.closePopup">&times;</span>
+      <h2>To integrate your GitHub repository, please add it below.</h2>
+      <div class="input__div">
+        <input type="text" v-model="this.username" placeholder="GitHub Username">
+        <input type="text" v-model="this.repository" placeholder="Repository Name">
+      </div>
+      <button @click="this.fetchBranches">Fetch Branches</button>
+    </div>
+  </div>
+
 
 </template>
 
@@ -232,5 +279,15 @@ export default {
   border: 2px solid #31363F;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.input__div {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+
+
 }
 </style>

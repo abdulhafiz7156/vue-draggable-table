@@ -17,7 +17,7 @@ body{
      left: 0;
      width: 100%;
      height: 100%;
-     background-color: rgba(0, 0, 0, 0.5);
+     background-color: rgba(0, 0, 0, 0.93);
      z-index: 999;
      display: flex;
      justify-content: center;
@@ -33,9 +33,9 @@ body{
 }
 
 .close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    color: white;
+    position: relative;
+    left: 98%;
     font-size: 20px;
     cursor: pointer;
 }
@@ -64,4 +64,103 @@ button {
 
 button:hover {
     background-color: #0056b3; /* Change button hover color as needed */
+}
+
+
+.columns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    margin: 0px 20px;
+    /*overflow: hidden;*/
+}
+.container {
+    width: 95%;
+    margin: 0 auto;
+
+}
+.columns .child {
+    height: 95vh;
+    border: 2px solid #31363F;
+    width: 23%;
+    overflow: scroll;
+}
+::-webkit-scrollbar {
+    width: 5px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #4e4e4e;
+    border-radius: 5px 0 0 5px;
+}
+.cards {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    border: 2px solid #31363F;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.input__div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.sort__div {
+    display: flex;
+    justify-content: right;
+    margin-bottom: 10px;
+}
+
+.sort__div div {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.task__popup__content {
+    height: 94%;
+    margin: 0px;
+    border-bottom: none;
+    border-top: none;
+    border-right: none;
+    border-radius: 0px;
+}
+
+.task__popup {
+    justify-content: right;
+}
+
+.task__popup__content div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.task__popup__content div input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.task__popup__button__div  {
+    flex-direction: unset !important;
+    justify-content: left !important;
+}
+
+.task__popup__button__div button {
+    margin-right: 10px;
+
 }

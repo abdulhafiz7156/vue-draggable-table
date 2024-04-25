@@ -1,8 +1,6 @@
 <script>
-// import Cards from './components/Cards.vue'
 export default {
   name: 'app',
-  // components: {Cards},
   data() {
     return {
       tasks: [
@@ -145,7 +143,6 @@ export default {
   },
   methods: {
     handleDragStart(index) {
-      console.log(index)
       this.draggedItem = index;
     },
     handleDragOver(event) {
@@ -183,7 +180,6 @@ export default {
           })
           .then(data => {
             this.branches = data;
-            console.log(this.branches);
             localStorage.setItem('githubBranches', JSON.stringify(data));
             this.showPopup = false;
           })
@@ -206,14 +202,14 @@ export default {
       this.taskPopup = false;
     },
     createTask(category) {
+      this.newTask.category = category;
+      const lastId = this.tasks[this.tasks.length - 1].id;
+      this.newTask.id = lastId + 1;
       const currentDate = new Date();
       const day = currentDate.getDate();
       const month = currentDate.getMonth() + 1;
       const year = currentDate.getFullYear();
-      const lastId = this.tasks.pop().id
-      this.newTask.id = lastId + 1;
       this.newTask.date = `${day}-${month}-${year}`;
-      this.newTask.category = category;
       this.tasks.push(this.newTask);
       this.createTaskDiv = false
       this.newTask = {
@@ -257,6 +253,7 @@ export default {
              :key="index"
              class="cards"
              draggable="true"
+             title="Click to edit the task"
              @dragstart="handleDragStart(item.id)"
              @dragend="handleDragEnd"
              @click="openTaskPopup(item)"
@@ -268,7 +265,7 @@ export default {
           </div>
         </div>
         <div class="cards create__task">
-          <p v-if="!this.createTaskDiv" @click="this.openCloseTask()" >+</p>
+          <p v-if="!this.createTaskDiv" @click="this.openCloseTask()" title="Click to add task" >+</p>
           <div v-if="this.createTaskDiv">
             <input type="text" v-model="this.newTask.title">
             <button @click="createTask(column.class)">Save</button>

@@ -73,7 +73,6 @@ button:hover {
     align-items: center;
     height: 100vh;
     margin: 0px 20px;
-    /*overflow: hidden;*/
 }
 .container {
     width: 95%;
@@ -85,6 +84,7 @@ button:hover {
     border: 2px solid #31363F;
     width: 23%;
     overflow: scroll;
+    overflow-x: auto;
 }
 ::-webkit-scrollbar {
     width: 5px;

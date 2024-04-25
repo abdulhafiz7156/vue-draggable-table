@@ -162,5 +162,19 @@ button:hover {
 
 .task__popup__button__div button {
     margin-right: 10px;
+}
 
+.create__task p {
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+
+}
+
+.create__task input{
+    background-color: transparent;
+    border: 2px solid #31363F;
+    margin: 10px 0px;
+    height: 30px;
+    outline: none;
 }
